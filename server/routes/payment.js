@@ -90,6 +90,14 @@ router.post('/create-subscription', authenticateToken, async (req, res) => {
       mode: 'subscription',
       success_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/cancel`,
+      // IMPORTANT: subscription webhooks include the Subscription object, not the Checkout Session.
+      // Metadata must be set on the subscription via subscription_data.metadata.
+      subscription_data: {
+        metadata: {
+          userId: userId.toString(),
+          planType
+        }
+      },
       metadata: {
         userId: userId.toString(),
         planType
@@ -143,7 +151,38 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       case 'customer.subscription.updated':
         const subscription = event.data.object;
         const customerId = subscription.customer;
-        const metadata = subscription.metadata;
+        const subscriptionMetadata = subscription.metadata || {};
+        let userId = subscriptionMetadata.userId;
+        let planType = subscriptionMetadata.planType;
+
+        // Fallback: we also store userId on the Stripe customer.
+        // If subscription metadata is missing (older sessions), backfill it.
+        if (!userId && customerId) {
+          const customer = await stripe.customers.retrieve(customerId);
+          userId = customer?.metadata?.userId;
+        }
+
+        if (!planType) {
+          planType = 'premium';
+        }
+
+        if (!userId) {
+          throw new Error(`Missing userId metadata for subscription ${subscription.id}`);
+        }
+
+        // Keep Stripe objects consistent for future webhook events.
+        if (
+          subscriptionMetadata.userId !== userId ||
+          subscriptionMetadata.planType !== planType
+        ) {
+          await stripe.subscriptions.update(subscription.id, {
+            metadata: {
+              ...subscriptionMetadata,
+              userId: userId.toString(),
+              planType
+            }
+          });
+        }
 
         await run(
           `INSERT INTO subscriptions
@@ -155,10 +194,10 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
            current_period_end = excluded.current_period_end,
            updated_at = CURRENT_TIMESTAMP`,
           [
-            metadata.userId,
+            Number.parseInt(userId, 10),
             subscription.id,
             customerId,
-            metadata.planType || 'premium',
+            planType,
             subscription.status,
             new Date(subscription.current_period_start * 1000).toISOString(),
             new Date(subscription.current_period_end * 1000).toISOString()
