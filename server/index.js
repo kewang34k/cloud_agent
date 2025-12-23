@@ -18,12 +18,20 @@ const db = require('./database/db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const jsonParser = express.json();
 
 // Middleware
 app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
-app.use(express.json());
+// Stripe webhook signature verification requires the raw request body.
+// If we globally parse JSON first, the webhook route cannot recover the raw body.
+app.use((req, res, next) => {
+  if (req.originalUrl && req.originalUrl.startsWith('/api/payment/webhook')) {
+    return next();
+  }
+  return jsonParser(req, res, next);
+});
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files
