@@ -399,7 +399,26 @@
                     body: JSON.stringify({ priceId, planType })
                 });
 
-                const { url } = await response.json();
+                let data = null;
+                try {
+                    data = await response.json();
+                } catch (_) {
+                    // Non-JSON error response; handled below via response.ok/status.
+                }
+
+                if (!response.ok) {
+                    const message = (data && data.error) ? data.error : `Failed to create subscription (HTTP ${response.status})`;
+                    alert(message);
+                    return;
+                }
+
+                const url = data && data.url;
+                if (!url || typeof url !== 'string') {
+                    const message = (data && data.error) ? data.error : 'Failed to create subscription: missing checkout URL.';
+                    alert(message);
+                    return;
+                }
+
                 window.location.href = url;
             } catch (error) {
                 console.error('Subscription error:', error);
