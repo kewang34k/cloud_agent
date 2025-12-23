@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game</title>
+    <title>Christmas Snake Game</title>
     <style>
         * {
             margin: 0;
@@ -17,23 +17,49 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #165B33 0%, #BB2528 50%, #146B3A 100%);
             padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Snowflakes */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            font-size: 1em;
+            animation: fall linear infinite;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
         }
 
         .game-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             text-align: center;
+            border: 3px solid #FFD700;
+            z-index: 10;
+            position: relative;
         }
 
         h1 {
-            color: #667eea;
+            background: linear-gradient(45deg, #BB2528, #146B3A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 20px;
             font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
         }
 
         .score-board {
@@ -44,22 +70,23 @@
         }
 
         .score-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BB2528 0%, #146B3A 100%);
             color: white;
             padding: 15px 30px;
             border-radius: 10px;
             font-size: 1.2em;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(187, 37, 40, 0.4);
+            border: 2px solid #FFD700;
         }
 
         #gameCanvas {
-            border: 4px solid #667eea;
+            border: 4px solid #FFD700;
             border-radius: 10px;
-            background-color: #1a1a2e;
+            background-color: #0a1929;
             display: block;
             margin: 0 auto 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 50px rgba(255, 215, 0, 0.1);
         }
 
         .controls {
@@ -67,21 +94,21 @@
         }
 
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #BB2528 0%, #146B3A 100%);
             color: white;
-            border: none;
+            border: 2px solid #FFD700;
             padding: 15px 40px;
             font-size: 1.1em;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(187, 37, 40, 0.4);
         }
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
         }
 
         button:active {
@@ -89,9 +116,13 @@
         }
 
         .instructions {
-            color: #666;
+            color: #333;
             margin-top: 20px;
             line-height: 1.6;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #FFD700;
         }
 
         .instructions p {
@@ -110,6 +141,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             text-align: center;
+            border: 3px solid #FFD700;
         }
 
         .game-over.show {
@@ -117,7 +149,10 @@
         }
 
         .game-over h2 {
-            color: #764ba2;
+            background: linear-gradient(45deg, #BB2528, #146B3A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 2em;
             margin-bottom: 20px;
         }
@@ -145,38 +180,53 @@
     </style>
 </head>
 <body>
+    <!-- Generate snowflakes -->
+    <script>
+        for (let i = 0; i < 50; i++) {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + '%';
+            snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            snowflake.style.animationDelay = Math.random() * 5 + 's';
+            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            document.body.appendChild(snowflake);
+        }
+    </script>
+
     <div class="game-container">
-        <h1>🐍 Snake Game</h1>
+        <h1>🎄 Christmas Lights Snake 🎅</h1>
 
         <div class="score-board">
             <div class="score-item">
-                Score: <span id="score">0</span>
+                Gifts: <span id="score">0</span> 🎁
             </div>
             <div class="score-item">
-                High Score: <span id="highScore">0</span>
+                Best: <span id="highScore">0</span> ⭐
             </div>
         </div>
 
         <canvas id="gameCanvas" width="400" height="400"></canvas>
 
         <div class="controls">
-            <button id="startBtn">Start Game</button>
+            <button id="startBtn">🎮 Start Game</button>
         </div>
 
         <div class="instructions">
-            <p><strong>How to Play:</strong></p>
-            <p>Use Arrow Keys to control the snake</p>
-            <p>Eat the red food to grow and score points</p>
-            <p>Don't hit the walls or yourself!</p>
+            <p><strong>🎄 How to Play:</strong></p>
+            <p>Use Arrow Keys to guide your Christmas lights</p>
+            <p>Collect presents to make your light string longer!</p>
+            <p>Don't crash into walls or yourself!</p>
+            <p><em>Happy Holidays! 🎅🎄</em></p>
         </div>
     </div>
 
     <div class="overlay" id="overlay"></div>
     <div class="game-over" id="gameOver">
-        <h2>Game Over!</h2>
-        <p>Your Score: <span id="finalScore">0</span></p>
-        <p>High Score: <span id="finalHighScore">0</span></p>
-        <button id="restartBtn">Play Again</button>
+        <h2>🎄 Game Over! 🎄</h2>
+        <p>Gifts Collected: <span id="finalScore">0</span> 🎁</p>
+        <p>Best Score: <span id="finalHighScore">0</span> ⭐</p>
+        <button id="restartBtn">🎮 Play Again</button>
     </div>
 
     <script>
@@ -198,20 +248,48 @@
         let velocity = {x: 0, y: 0};
         let food = {x: 15, y: 15};
         let score = 0;
-        let highScore = localStorage.getItem('snakeHighScore') || 0;
+        let highScore = localStorage.getItem('christmasSnakeHighScore') || 0;
         let gameLoop = null;
         let gameRunning = false;
         let gameSpeed = 100;
+        let snowflakes = [];
+
+        // Initialize background snowflakes
+        for (let i = 0; i < 30; i++) {
+            snowflakes.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                speed: Math.random() * 1 + 0.5,
+                size: Math.random() * 3 + 1
+            });
+        }
 
         highScoreElement.textContent = highScore;
 
         function drawGame() {
-            // Clear canvas
-            ctx.fillStyle = '#1a1a2e';
+            // Clear canvas with night sky gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, '#0a1929');
+            bgGradient.addColorStop(1, '#1e3a5f');
+            ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw grid
-            ctx.strokeStyle = '#16213e';
+            // Draw and update snowflakes
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            snowflakes.forEach(flake => {
+                ctx.beginPath();
+                ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                flake.y += flake.speed;
+                if (flake.y > canvas.height) {
+                    flake.y = 0;
+                    flake.x = Math.random() * canvas.width;
+                }
+            });
+
+            // Draw subtle grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.lineWidth = 0.5;
             for (let i = 0; i <= tileCount; i++) {
                 ctx.beginPath();
@@ -255,7 +333,7 @@
                     if (score > highScore) {
                         highScore = score;
                         highScoreElement.textContent = highScore;
-                        localStorage.setItem('snakeHighScore', highScore);
+                        localStorage.setItem('christmasSnakeHighScore', highScore);
                     }
 
                     placeFood();
@@ -271,79 +349,91 @@
                 }
             }
 
-            // Draw snake
+            // Draw Christmas lights snake with alternating colors
+            const lightColors = ['#BB2528', '#146B3A', '#FFD700', '#FF6B6B', '#4ECDC4'];
+
             snake.forEach((segment, index) => {
-                if (index === 0) {
-                    // Head
-                    const gradient = ctx.createLinearGradient(
-                        segment.x * gridSize,
-                        segment.y * gridSize,
-                        segment.x * gridSize + gridSize,
-                        segment.y * gridSize + gridSize
-                    );
-                    gradient.addColorStop(0, '#4ade80');
-                    gradient.addColorStop(1, '#22c55e');
-                    ctx.fillStyle = gradient;
-                } else {
-                    // Body
-                    const gradient = ctx.createLinearGradient(
-                        segment.x * gridSize,
-                        segment.y * gridSize,
-                        segment.x * gridSize + gridSize,
-                        segment.y * gridSize + gridSize
-                    );
-                    gradient.addColorStop(0, '#86efac');
-                    gradient.addColorStop(1, '#4ade80');
-                    ctx.fillStyle = gradient;
-                }
+                // Draw light bulb
+                const color = lightColors[index % lightColors.length];
 
-                ctx.fillRect(
-                    segment.x * gridSize + 1,
-                    segment.y * gridSize + 1,
-                    gridSize - 2,
-                    gridSize - 2
+                // Glow effect
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = color;
+
+                // Create radial gradient for bulb
+                const gradient = ctx.createRadialGradient(
+                    segment.x * gridSize + gridSize / 2,
+                    segment.y * gridSize + gridSize / 2,
+                    2,
+                    segment.x * gridSize + gridSize / 2,
+                    segment.y * gridSize + gridSize / 2,
+                    gridSize / 2
                 );
+                gradient.addColorStop(0, 'white');
+                gradient.addColorStop(0.3, color);
+                gradient.addColorStop(1, color);
 
-                // Draw eyes on head
-                if (index === 0) {
-                    ctx.fillStyle = '#1a1a2e';
-                    const eyeSize = 3;
-                    if (velocity.x === 1) { // Moving right
-                        ctx.fillRect(segment.x * gridSize + gridSize - 8, segment.y * gridSize + 5, eyeSize, eyeSize);
-                        ctx.fillRect(segment.x * gridSize + gridSize - 8, segment.y * gridSize + 12, eyeSize, eyeSize);
-                    } else if (velocity.x === -1) { // Moving left
-                        ctx.fillRect(segment.x * gridSize + 5, segment.y * gridSize + 5, eyeSize, eyeSize);
-                        ctx.fillRect(segment.x * gridSize + 5, segment.y * gridSize + 12, eyeSize, eyeSize);
-                    } else if (velocity.y === -1) { // Moving up
-                        ctx.fillRect(segment.x * gridSize + 5, segment.y * gridSize + 5, eyeSize, eyeSize);
-                        ctx.fillRect(segment.x * gridSize + 12, segment.y * gridSize + 5, eyeSize, eyeSize);
-                    } else if (velocity.y === 1) { // Moving down
-                        ctx.fillRect(segment.x * gridSize + 5, segment.y * gridSize + gridSize - 8, eyeSize, eyeSize);
-                        ctx.fillRect(segment.x * gridSize + 12, segment.y * gridSize + gridSize - 8, eyeSize, eyeSize);
-                    }
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(
+                    segment.x * gridSize + gridSize / 2,
+                    segment.y * gridSize + gridSize / 2,
+                    gridSize / 2 - 2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+
+                // Draw wire connector (small line to next segment)
+                if (index < snake.length - 1) {
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 0;
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        segment.x * gridSize + gridSize / 2,
+                        segment.y * gridSize + gridSize / 2
+                    );
+                    ctx.lineTo(
+                        snake[index + 1].x * gridSize + gridSize / 2,
+                        snake[index + 1].y * gridSize + gridSize / 2
+                    );
+                    ctx.stroke();
                 }
             });
 
-            // Draw food with glow effect
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#ef4444';
-            const foodGradient = ctx.createRadialGradient(
-                food.x * gridSize + gridSize / 2,
-                food.y * gridSize + gridSize / 2,
-                2,
-                food.x * gridSize + gridSize / 2,
-                food.y * gridSize + gridSize / 2,
-                gridSize / 2
+            ctx.shadowBlur = 0;
+
+            // Draw Christmas present (food)
+            const presentX = food.x * gridSize + 2;
+            const presentY = food.y * gridSize + 2;
+            const presentSize = gridSize - 4;
+
+            // Gift box
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#FFD700';
+
+            const giftGradient = ctx.createLinearGradient(
+                presentX, presentY,
+                presentX + presentSize, presentY + presentSize
             );
-            foodGradient.addColorStop(0, '#fca5a5');
-            foodGradient.addColorStop(1, '#ef4444');
-            ctx.fillStyle = foodGradient;
-            ctx.fillRect(
-                food.x * gridSize + 2,
-                food.y * gridSize + 2,
-                gridSize - 4,
-                gridSize - 4
-            );
+            giftGradient.addColorStop(0, '#BB2528');
+            giftGradient.addColorStop(1, '#8B1A1D');
+            ctx.fillStyle = giftGradient;
+            ctx.fillRect(presentX, presentY, presentSize, presentSize);
+
+            // Ribbon horizontal
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(presentX, presentY + presentSize / 2 - 1, presentSize, 2);
+
+            // Ribbon vertical
+            ctx.fillRect(presentX + presentSize / 2 - 1, presentY, 2, presentSize);
+
+            // Bow
+            ctx.beginPath();
+            ctx.arc(presentX + presentSize / 2, presentY + presentSize / 2, 3, 0, Math.PI * 2);
+            ctx.fill();
+
             ctx.shadowBlur = 0;
         }
 
@@ -377,7 +467,7 @@
             scoreElement.textContent = score;
             placeFood();
             gameRunning = true;
-            startBtn.textContent = 'Restart Game';
+            startBtn.innerHTML = '🎮 Restart Game';
 
             if (gameLoop) {
                 clearInterval(gameLoop);
