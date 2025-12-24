@@ -63,3 +63,27 @@ The game features:
 - Corner decorations: palm tree, sun, surfer, watermelon
 
 Catch some waves and enjoy the summer! ☀️🏖️
+
+## Payment API Backend
+
+This repository now includes a lightweight Express backend to support payment flows for the game (or any other client).
+
+### Running the server
+
+1. Install dependencies (already included in `package-lock.json`):
+   ```bash
+   npm install
+   ```
+2. Start the API (defaults to port `3001`):
+   ```bash
+   npm run start
+   ```
+
+### Available endpoints
+
+- `POST /api/payments` — Create a new payment intent. Requires `amount` (number), `currency` (3-letter code), and `method` (string). Returns a `paymentId`, `clientSecret`, status, and timestamp.
+- `GET /api/payments/:id` — Retrieve the current state of a payment.
+- `POST /api/payments/:id/confirm` — Confirm a pending payment. Simulates processing and marks it as `succeeded`.
+- `POST /api/payments/webhook` — Simple webhook receiver to update status from an external provider. Accepts `paymentId`, `status` (`succeeded`, `failed`, `requires_action`, `canceled`), and optional `providerReference`.
+
+These endpoints use in-memory storage for simplicity; replace with your persistence and real payment gateway integration as needed.
