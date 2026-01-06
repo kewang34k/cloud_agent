@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏖️ Summer Beach Snake ☀️</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Corner decorations -->
+    <div class="corner-decor top-left">🌴</div>
+    <div class="corner-decor top-right">☀️</div>
+    <div class="corner-decor bottom-left">🏄</div>
+    <div class="corner-decor bottom-right">🍉</div>
+
+    <div class="game-container">
+        <h1>🌊 Summer Beach Snake ☀️</h1>
+        <div class="tagline">✨ Cute, cozy, and beachy fun awaits!</div>
+
+        <div class="score-board">
+            <div class="score-item">
+                🍉 Snacks: <span id="score">0</span>
+            </div>
+            <div class="score-item">
+                ⭐ Best: <span id="highScore">0</span>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div class="controls">
+            <button id="startBtn">🏄 Start Game!</button>
+        </div>
+
+        <div class="instructions">
+            <p><strong>🏖️ How to Play 🏖️</strong></p>
+            <p>🎯 Use Arrow Keys to guide your beach snake!</p>
+            <p>🍉 Collect summer snacks to grow longer!</p>
+            <p>🌊 Don't crash into walls or yourself!</p>
+            <p><em>Enjoy the sunny vibes! ☀️🌴</em></p>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="game-over" id="gameOver">
+        <h2>🌊 Game Over! ☀️</h2>
+        <p>🍉 Snacks Collected: <span id="finalScore">0</span></p>
+        <p>⭐ Your Best: <span id="finalHighScore">0</span></p>
+        <button id="restartBtn">🏄 Play Again!</button>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
