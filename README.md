@@ -1,22 +1,16 @@
 # Summer Beach Snake Game
 
-A vibrant summer-themed single-player Snake game built with HTML, CSS, and JavaScript. Surf the beach and collect tropical snacks!
+一个夏日海滩主题的单人贪吃蛇小游戏（HTML/CSS/JavaScript）。在画布上操控小蛇收集西瓜与零食，分数越高速度越快，并支持最高分本地保存。
 
-## Features
+## 核心特性
 
-- Summer beach theme with tropical visuals
-- Animated rising bubbles and ocean waves
-- Snake with vibrant tropical colors (tomato, gold, teal, pink, orange, turquoise)
-- Collect watermelon slices and summer snacks
-- Score tracking with persistent high score (saved in browser)
-- Progressive difficulty - game speeds up as you collect more snacks
-- Beautiful summer color scheme (coral, turquoise, gold, sandy yellow)
-- Ocean gradient background with animated waves
-- Pulsing sun animation in the corner
-- Glowing effects with gradient colors
-- Cute playful UI with beach emojis
+- 纯前端：Canvas 渲染，无框架依赖
+- 玩法：收集食物增长；撞墙/撞到自己则结束
+- 进度：每收集一定数量会加速（难度递增）
+- 记录：分数与最高分（LocalStorage）
+- 视觉：海滩配色 + 气泡/海浪/太阳等动效
 
-## How to Play
+## 玩法
 
 1. Open `index.html` in any modern web browser
 2. Click "Start Game" to begin
@@ -27,63 +21,34 @@ A vibrant summer-themed single-player Snake game built with HTML, CSS, and JavaS
    - → Right Arrow - Move right
 4. Collect watermelon slices to grow your snake
 5. Avoid hitting the walls or yourself
-6. Enjoy the sunny beach vibes!
+6. Try to beat your high score
 
-## Game Rules
+## 规则与实现（简要）
 
-- Each watermelon slice gives you 1 point
-- Your snake grows longer with each snack collected
-- Game speed increases every 5 snacks
-- Game ends if you hit a wall or your own body
-- High score is saved locally in your browser
-- The snake alternates between tropical colors: tomato, gold, teal, pink, orange, and turquoise
+- 计分：每个食物 +1；速度随进度提升
+- 结束条件：撞墙或撞到自己
+- 渲染：Canvas；最高分存储：LocalStorage
 
-## Technical Details
+## 支付 API 后端
 
-- Pure vanilla JavaScript (no frameworks required)
-- Canvas-based rendering for smooth graphics
-- LocalStorage for high score persistence
-- Fully self-contained single HTML file
-- Fredoka font from Google Fonts for playful typography
+仓库内包含一个轻量的 Express 后端，用于演示/承载支付流程（也可供其他客户端复用）。
 
-## Visual Features
+### Quick start
 
-The game features:
-- A 20x20 grid game board with ocean-to-beach gradient
-- Colorful tropical snake (alternating tomato, gold, teal, pink, orange, turquoise)
-- Glowing snake segments with pulsing effects
-- Animated watermelon slices with rotating seeds
-- 30 rising bubbles with varying speeds
-- Animated ocean waves across the canvas
-- Pulsing sun in the top right corner
-- Coral and turquoise gradient UI theme with gold accents
-- Beach emojis throughout (🌊, 🏖️, ☀️, 🌴, 🍉, 🏄, 🌺, 🐚, ⛱️, 🦀)
-- Score display showing "Snacks" collected
-- Floating beach decorations (waves, beaches, flowers, shells, umbrellas, crabs)
-- Corner decorations: palm tree, sun, surfer, watermelon
-
-Catch some waves and enjoy the summer! ☀️🏖️
-
-## Payment API Backend
-
-This repository now includes a lightweight Express backend to support payment flows for the game (or any other client).
-
-### Running the server
-
-1. Install dependencies (already included in `package-lock.json`):
+1. 安装依赖：
    ```bash
    npm install
    ```
-2. Start the API (defaults to port `3001`):
+2. 启动 API（默认端口 `3001`）：
    ```bash
    npm run start
    ```
 
-### Available endpoints
+### 接口列表
 
-- `POST /api/payments` — Create a new payment intent. Requires `amount` (number), `currency` (3-letter code), and `method` (string). Returns a `paymentId`, `clientSecret`, status, and timestamp.
-- `GET /api/payments/:id` — Retrieve the current state of a payment.
-- `POST /api/payments/:id/confirm` — Confirm a pending payment. Simulates processing and marks it as `succeeded`.
-- `POST /api/payments/webhook` — Simple webhook receiver to update status from an external provider. Accepts `paymentId`, `status` (`succeeded`, `failed`, `requires_action`, `canceled`), and optional `providerReference`.
+- `POST /api/payments` — 创建支付单：`amount`(number), `currency`(3-letter), `method`(string) → 返回 `paymentId`, `clientSecret`, status, timestamp
+- `GET /api/payments/:id` — 查询支付单状态
+- `POST /api/payments/:id/confirm` — 确认支付：模拟处理并标记为 `succeeded`
+- `POST /api/payments/webhook` — 接收外部回调：`paymentId`, `status`(`succeeded|failed|requires_action|canceled`), 可选 `providerReference`
 
-These endpoints use in-memory storage for simplicity; replace with your persistence and real payment gateway integration as needed.
+说明：当前使用内存存储（演示用途）；如需生产使用请替换为持久化存储与真实支付网关。
